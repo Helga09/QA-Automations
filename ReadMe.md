@@ -31,11 +31,7 @@ This is a REST API for a blog platform built using Node.js, Express, and MongoDB
 - Ensure you have **Node.js** and **MongoDB** installed on your machine.
 
 ### Steps:
-1. **Clone the Repository**:
-   ```bash
-   git clone <repository-url>
-   cd <project-folder>
-   ```
+1. **Clone the Repository**
 2. **Install Dependencies:**
     ```bash
     npm install
