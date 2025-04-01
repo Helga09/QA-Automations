@@ -31,7 +31,11 @@ This is a REST API for a blog platform built using Node.js, Express, and MongoDB
 - Ensure you have **Node.js** and **MongoDB** installed on your machine.
 
 ### Steps:
-1. **Clone the Repository**
+1. **Clone the Repository**:
+    ```bash
+    git clone https://github.com/Helga09/QA-Automations.git
+    cd QA-Automations
+    ```
 2. **Install Dependencies:**
     ```bash
     npm install
