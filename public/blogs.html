@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .post {
+            background-color: #fafafa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .post h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .post p {
+            font-size: 1.1em;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .profile-button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .profile-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Posts</h1>
+        <div id="postsList">Loading posts...</div>
+
+        <!-- Profile Button -->
+        <button class="profile-button" id="profileButton">Go to Profile</button>
+    </div>
+
+    <script>
+        const email = new URLSearchParams(window.location.search).get('email');
+
+        document.getElementById('profileButton').onclick = function() {
+            window.location.href = `profile.html?email=${encodeURIComponent(email)}`;
+        };
+
+        async function getPosts() {
+            const response = await fetch('http://localhost:3000/posts');
+            const posts = await response.json();
+
+            const postsList = document.getElementById('postsList');
+            postsList.innerHTML = ''; 
+
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `
+                    <h2>${post.title}</h2>
+                    <p>${post.content}</p>
+                    <button class="button" onclick="window.location.href='blog.html?id=${post._id}&email=${encodeURIComponent(email)}'">Read More</button>
+                `;
+                postsList.appendChild(postElement);
+            });
+        }
+
+        getPosts();
+    </script>
+</body>
+</html>

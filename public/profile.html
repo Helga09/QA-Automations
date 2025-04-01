@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .profile-info, .posts-list {
+            margin-bottom: 30px;
+        }
+
+        /* Profile Info */
+        .profile-info p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .post-form input, .post-form textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .post-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        .post-form button:hover {
+            background-color: #45a049;
+        }
+
+        /* Post Styling */
+        .post {
+            background-color: #fafafa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .post h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .post p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        /* Post Actions */
+        .post-actions {
+            margin-top: 15px;
+        }
+
+        .post-actions button {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .post-actions button:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Logout Button */
+        #logoutButton {
+            width: 100%;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #logoutButton:hover {
+            background-color: #555;
+        }
+
+        /* View All Posts Button */
+        #viewAllPostsButton {
+            width: 100%;
+            padding: 15px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        #viewAllPostsButton:hover {
+            background-color: #1976D2;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .post-form input, .post-form textarea {
+                padding: 12px;
+            }
+
+            .post-form button {
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Profile</h1>
+
+        <div class="profile-info" id="profileInfo">
+            <p>Loading profile...</p>
+        </div>
+
+        <div class="post-form">
+            <h3>Create a New Post</h3>
+            <input type="text" id="postTitle" placeholder="Post Title" required>
+            <textarea id="postContent" placeholder="Post Content" rows="5" required></textarea>
+            <button id="createPostButton">Create Post</button>
+        </div>
+
+        <div class="posts-list" id="postsList">
+            <p>Loading posts...</p>
+        </div>
+
+        <button id="viewAllPostsButton">View All Posts</button>
+        <button id="logoutButton">Logout</button>
+    </div>
+
+    <script>
+        const email = new URLSearchParams(window.location.search).get('email');
+        const username = new URLSearchParams(window.location.search).get('username');
+
+        async function getUserProfile() {
+            const response = await fetch(`http://localhost:3000/profile?email=${encodeURIComponent(email)}`);
+            if (response.ok) {
+                const { user, posts } = await response.json();
+                document.getElementById('profileInfo').innerHTML = `
+                    <p><strong>Username:</strong> ${user.username}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                `;
+                const postsList = document.getElementById('postsList');
+                postsList.innerHTML = '';
+                posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('post');
+                    postElement.innerHTML = `
+                        <h2>${post.title}</h2>
+                        <p>${post.content}</p>
+                        <div class="post-actions">
+                            <button onclick="editPost('${post._id}', '${post.title}', '${post.content}')">Edit</button>
+                            <button onclick="deletePost('${post._id}')">Delete</button>
+                        </div>
+                    `;
+                    postsList.appendChild(postElement);
+                });
+            } else {
+                document.getElementById('profileInfo').innerHTML = `<p>Error loading profile. Please log in.</p>`;
+            }
+        }
+
+        async function createPost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+
+            const response = await fetch('http://localhost:3000/posts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content, email }),
+            });
+
+            if (response.ok) {
+                alert('Post created successfully');
+                getUserProfile();
+            } else {
+                alert('Error creating post');
+            }
+        }
+
+        async function editPost(postId, title, content) {
+            const newTitle = prompt("Edit post title", title);
+            const newContent = prompt("Edit post content", content);
+
+            if (newTitle && newContent) {
+                const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: newTitle, content: newContent }),
+                });
+
+                if (response.ok) {
+                    alert('Post updated successfully');
+                    getUserProfile();
+                } else {
+                    alert('Error updating post');
+                }
+            }
+        }
+
+        async function deletePost(postId) {
+            const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                alert('Post deleted successfully');
+                getUserProfile();
+            } else {
+                alert('Error deleting post');
+            }
+        }
+
+        document.getElementById('viewAllPostsButton').addEventListener('click', () => {
+            window.location.href = `blogs.html?email=${encodeURIComponent(email)}`;
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+                window.location.href = 'login.html';
+        });
+
+        getUserProfile();
+
+        document.getElementById('createPostButton').addEventListener('click', createPost);
+    </script>
+</body>
+</html>
