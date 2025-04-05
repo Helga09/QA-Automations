@@ -15,13 +15,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/blog';
 
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const { connectToDB } = require('./db');
+connectToDB(MONGO_URI);
+
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+if (require.main === module) {
+  app.listen(3000, () => console.log('Server running on port 3000'));
+}
+
+module.exports = app;
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
