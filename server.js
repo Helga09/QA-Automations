@@ -12,11 +12,22 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/blog', { useNewUrlParser: true, useUnifiedTopology: true });
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/blog';
+
+const { connectToDB } = require('./db');
+connectToDB(MONGO_URI);
+
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
+
+if (require.main === module) {
+  app.listen(3000, () => console.log('Server running on port 3000'));
+}
+
+module.exports = app;
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
