@@ -23,11 +23,12 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-if (require.main === module) {
-  app.listen(3000, () => console.log('Server running on port 3000'));
-}
+const server = app.listen(3000, () => {
+  console.log('Server running on port 3000');
+  console.log('Connected to MongoDB');
+});
 
-module.exports = app;
+module.exports = { app, server };  
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
@@ -228,4 +229,3 @@ app.post('/comments', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
