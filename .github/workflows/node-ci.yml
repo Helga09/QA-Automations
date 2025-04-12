@@ -15,7 +15,6 @@ jobs:
         image: mongo
         ports:
           - 27017:27017
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,7 +24,7 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
+      - name: Install Node.js dependencies
         run: npm ci
 
       - name: Wait for MongoDB to be ready
@@ -42,5 +41,5 @@ jobs:
       - name: Run ESLint
         run: npx eslint .
 
-      - name: Run Tests
+      - name: Run Node.js Tests
         run: npm test --coverage
