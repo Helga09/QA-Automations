@@ -6,7 +6,7 @@ let driver;
 
 Given('I open the login page', async () => {
   driver = await new Builder().forBrowser('chrome').build();
-  await driver.get('http://localhost/QA-Automations/QA-Automations/public/login.html');
+  await driver.get('http://localhost:3000/login.html');
 });
 
 When('I enter valid credentials', async () => {

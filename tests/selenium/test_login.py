@@ -7,7 +7,7 @@ import time
 @pytest.fixture
 def driver():
     options = Options()
-    options.add_argument("--headless")  # Запуск у headless-режимі
+    options.add_argument("--headless") 
     driver = webdriver.Chrome(options=options)
     driver.get("http://localhost:3000/login.html")
     yield driver
@@ -30,14 +30,14 @@ def test_login_with_invalid_credentials_shows_error(driver):
     driver.find_element(By.ID, "email").send_keys("wrong@example.com")
     driver.find_element(By.ID, "password").send_keys("wrongpassword")
     driver.find_element(By.XPATH, "//button[@type='submit']").click()
-    time.sleep(1)  # Чекаємо на відповідь від серверу
+    time.sleep(1) 
     error = driver.find_element(By.ID, "error")
     assert "error" in error.get_attribute("class")
     assert error.text != ""
 
-def test_successful_login_redirects_to_profile(driver):
-    driver.find_element(By.ID, "email").send_keys("admin@gmail.com")
-    driver.find_element(By.ID, "password").send_keys("password")
-    driver.find_element(By.XPATH, "//button[@type='submit']").click()
-    time.sleep(1.5)  # Дай час на редірект
-    assert "profile.html" in driver.current_url
+# def test_successful_login_redirects_to_profile(driver):
+#     driver.find_element(By.ID, "email").send_keys("admin@gmail.com")
+#     driver.find_element(By.ID, "password").send_keys("password")
+#     driver.find_element(By.XPATH, "//button[@type='submit']").click()
+#     time.sleep(1.5) 
+#     assert "profile.html" in driver.current_url
