@@ -25,7 +25,12 @@ jobs:
           node-version: 18
 
       - name: Install Node.js dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Start server
+        run: |
+          node server.js &            
+          sleep 5
 
       - name: Wait for MongoDB to be ready
         run: |
@@ -43,3 +48,11 @@ jobs:
 
       - name: Run Node.js Tests
         run: npm test --coverage
+
+      - name: Install Selenium Side Runner
+        run: |
+         npm install -g selenium-side-runner
+
+      - name: Run Selenium Test
+        run: |
+         selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[headless,disable-gpu,no-sandbox]" /tests/selenium/test.side

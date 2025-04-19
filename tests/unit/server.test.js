@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app, server } = require('./server');
+const { app, server } = require('../../server');
 const mongoose = require('mongoose');
 
 
@@ -22,7 +22,7 @@ const mongoose = require('mongoose');
         .post('/login')
         .send({ email: 'testuser@example.com', password: 'password123' });
   
-      expect(response.status).toBe(200);  // Перевіряємо, що статус 200
+      expect(response.status).toBe(200);  
       expect(response.body.username).toBe('testuser');
       expect(response.body.email).toBe('testuser@example.com');
     });
@@ -32,7 +32,7 @@ const mongoose = require('mongoose');
         .post('/login')
         .send({ email: 'nonexistent@example.com', password: 'wrongpassword' });
   
-      expect(response.status).toBe(401);  // Повинна бути помилка 401
+      expect(response.status).toBe(401); 
       expect(response.body.error).toBe('Invalid email or password');
     });
   });
