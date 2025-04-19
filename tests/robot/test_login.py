@@ -9,7 +9,7 @@ def driver():
     options = Options()
     options.add_argument("--headless")  # Запуск у headless-режимі
     driver = webdriver.Chrome(options=options)
-    driver.get("http://localhost/QA-Automations/QA-Automations/public/login.html")
+    driver.get("http://localhost:3000/login.html")
     yield driver
     driver.quit()
 
