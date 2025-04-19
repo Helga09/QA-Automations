@@ -81,6 +81,13 @@ jobs:
           unzip chromedriver.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
+     
+      - name: Register user for test
+        run: |
+          curl -X POST http://localhost:3000/register \
+            -H 'Content-Type: application/json' \
+            -d '{"email":"admin@gmail.com", "username":"admin", "password":"password"}'
+
 
       - name: Run test script
         run: pytest ./tests/selenium/test_login.py
