@@ -100,5 +100,5 @@ jobs:
         run: pytest ./tests/selenium/test_login.py
      
       - name: Run cucumber tests
-        run: npx cucumber-js tests/features/login.feature
+        run: npx cucumber-js ./tests/features/login.feature
 
