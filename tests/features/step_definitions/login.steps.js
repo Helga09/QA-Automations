@@ -1,11 +1,28 @@
-const { Given, When, Then } = require('@cucumber/cucumber');
+const { Given, When, Then, After } = require('@cucumber/cucumber');
 const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
 let driver;
+let userDataDir;
+
+async function createDriver() {
+  userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'chrome-user-data-'));
+  const options = new chrome.Options();
+  options.addArguments(
+    `--user-data-dir=${userDataDir}`,
+    '--headless',
+    '--no-sandbox',
+    '--disable-dev-shm-usage'
+  );
+  return await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+}
 
 Given('I open the login page', async () => {
-  driver = await new Builder().forBrowser('chrome').build();
+  driver = await createDriver();
   await driver.get('http://localhost:3000/login.html');
 });
 
@@ -27,12 +44,21 @@ Then('I should be redirected to the profile page', async () => {
   await driver.wait(until.urlContains('profile.html'), 5000);
   const currentUrl = await driver.getCurrentUrl();
   assert(currentUrl.includes('profile.html'));
-  await driver.quit();
 });
 
 Then('I should see an error message', async () => {
-  await driver.wait(until.elementLocated(By.id('error')), 3000);
-  const errorText = await driver.findElement(By.id('error')).getText();
+  const errorElement = await driver.findElement(By.css('.error-message'));
+  const errorText = await errorElement.getText();
   assert(errorText.length > 0);
-  await driver.quit();
+});
+
+After(async () => {
+  if (driver) {
+    await driver.quit();
+    driver = null;
+  }
+  if (userDataDir) {
+    fs.rmSync(userDataDir, { recursive: true, force: true });
+    userDataDir = null;
+  }
 });

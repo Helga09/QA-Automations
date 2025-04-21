@@ -98,3 +98,7 @@ jobs:
 
       - name: Run test script
         run: pytest ./tests/selenium/test_login.py
+     
+      - name: Run cucumber tests
+        run: npx cucumber-js ./tests/features/login.feature
+
